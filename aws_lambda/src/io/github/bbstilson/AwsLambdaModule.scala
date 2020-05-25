@@ -1,7 +1,6 @@
 package io.github.bbstilson
 
 import io.github.bbstilson.model._
-// import io.github.bbstilson.model.AwsEnvVar._
 
 import mill._
 import mill.scalalib._
@@ -25,7 +24,7 @@ trait AwsLambdaModule extends ScalaModule {
   // def lambdaTimeout: Option[Int] = None
   // def lamdbaMemory: Option[Int] = None
 
-  def updateLambda = T {
+  def deployLambda = T {
     val s3 = S3Client.create
     val lambda = LambdaClient.create
     val config = LambdaConfig(
