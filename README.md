@@ -39,7 +39,7 @@ mill project.deployLambda
 | s3Bucket | The name of an S3 bucket where the lambda code will be stored. |
 | s3KeyPrefix | The prefix to the S3 key where the jar will be uploaded. |
 | lambdaName | The name to use for this AWS Lambda function. |
-| handlerName | Class name and method to be executed, e.g. `org.bbstilson.Handler::handle`. |
+| lambdaHandler | Class name and method to be executed. |
 
 ## Scala Versions
 

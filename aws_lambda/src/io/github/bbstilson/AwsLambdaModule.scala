@@ -1,7 +1,6 @@
 package io.github.bbstilson
 
 import io.github.bbstilson.model.LambdaConfig
-import io.github.bbstilson.model.LambdaConfig._
 
 import mill._
 import mill.scalalib._
