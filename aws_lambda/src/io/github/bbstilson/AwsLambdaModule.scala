@@ -1,6 +1,7 @@
 package io.github.bbstilson
 
-import io.github.bbstilson.model._
+import io.github.bbstilson.model.LambdaConfig
+import io.github.bbstilson.model.LambdaConfig._
 
 import mill._
 import mill.scalalib._
@@ -15,66 +16,71 @@ import scala.jdk.CollectionConverters._
 
 trait AwsLambdaModule extends ScalaModule {
 
-  def awsRegion: Option[String] = None
-  def s3Bucket: Option[String] = None
-  def s3KeyPrefix: Option[String] = None
-  def lambdaName: Option[String] = None // TODO: default to project name
-  def lambdaRoleArn: Option[String] = None
-  def lambdaHandlerName: Option[String] = None
-  // def lambdaTimeout: Option[Int] = None
-  // def lamdbaMemory: Option[Int] = None
+  import AwsLambdaModule._
+
+  def s3Bucket: String
+  def s3KeyPrefix: String
+  def lambdaName: String
+  def lambdaHandler: String
 
   def deployLambda = T {
-    val s3 = S3Client.create
-    val lambda = LambdaClient.create
     val config = LambdaConfig(
-      System.getenv.asScala.toMap,
-      awsRegion,
       s3Bucket,
       s3KeyPrefix,
       lambdaName,
-      lambdaRoleArn
-      // lambdaTimeout,
-      // lamdbaMemory
+      lambdaHandler
     )
-
     val jarPath: java.nio.file.Path = assembly().path.toNIO
-
-    // AWS REQUESTS
-    val putReq = PutObjectRequest.builder
-      .bucket(config.bucket)
-      .key(config.key)
-      .build
-
-    val updateFunctionCodeReq = UpdateFunctionCodeRequest.builder
-      .functionName(config.name)
-      .s3Bucket(config.bucket)
-      .s3Key(config.key)
-      .build
-
-    def mkTagReq(arn: String): TagResourceRequest = {
-      val tags = Map("deploy.timestamp" -> Instant.now.toString)
-      TagResourceRequest.builder
-        .resource(arn)
-        .tags(tags.asJava)
-        .build
-    }
+    val putReq = mkPutReq(config.bucket, config.key)
+    val updateCodeReq = mkUpdateCodeReq(config.name, config.bucket, config.key)
 
     // TODO: Figure out how to do progress listening in v2:
     // v1: https://docs.aws.amazon.com/AmazonS3/latest/dev/HLTrackProgressMPUJava.html
     val updateAttempt = for {
+      s3 <- Try { S3Client.create }
+      lambda <- Try { LambdaClient.create }
       _ <- Try { s3.putObject(putReq, jarPath) }
-      updateResp <- Try { lambda.updateFunctionCode(updateFunctionCodeReq) }
+      updateResp <- Try { lambda.updateFunctionCode(updateCodeReq) }
       tagResp <- Try { lambda.tagResource(mkTagReq(updateResp.functionArn)) }
     } yield tagResp
 
     updateAttempt match {
-      case Success(_)  => println("Deployed.")
+      case Success(_)  => println(s"Succesfully deployed ${config.name}.")
       case Failure(ex) => println(formatException(ex))
     }
   }
+}
 
-  private def formatException(t: Throwable): String = {
+object AwsLambdaModule {
+
+  def mkPutReq(bucket: String, key: String): PutObjectRequest = {
+    PutObjectRequest.builder
+      .bucket(bucket)
+      .key(key)
+      .build
+  }
+
+  def mkUpdateCodeReq(
+    name: String,
+    bucket: String,
+    key: String
+  ): UpdateFunctionCodeRequest = {
+    UpdateFunctionCodeRequest.builder
+      .functionName(name)
+      .s3Bucket(bucket)
+      .s3Key(key)
+      .build
+  }
+
+  def mkTagReq(arn: String): TagResourceRequest = {
+    val tags = Map("deploy.timestamp" -> Instant.now.toString).asJava
+    TagResourceRequest.builder
+      .resource(arn)
+      .tags(tags)
+      .build
+  }
+
+  def formatException(t: Throwable): String = {
     val msg = Option(t.getLocalizedMessage).getOrElse(t.toString)
     s"$msg\n${t.getStackTrace.mkString("", "\n", "\n")}"
   }
