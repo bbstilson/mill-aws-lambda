@@ -1,0 +1,10 @@
+language: scala
+os: linux
+dist: trusty
+before_install:
+- curl https://raw.githubusercontent.com/scala-native/scala-native/master/scripts/travis_setup.sh | bash -
+
+jdk: oraclejdk8
+
+script:
+  - ./mill -i __.test

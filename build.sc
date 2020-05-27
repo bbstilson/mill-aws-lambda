@@ -18,7 +18,7 @@ class AwsLambdaModule(val crossScalaVersion: String)
   def publishVersion = "0.1.0"
 
   def pomSettings = PomSettings(
-    description = "mill plugin to deploy code to AWS Lambda",
+    description = "Mill plugin to deploy code to AWS Lambda",
     organization = "io.github.bbstilson",
     url = "https://github.com/bbstilson/mill-aws-lambda",
     licenses = Seq(License.`Apache-2.0`),
