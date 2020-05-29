@@ -15,7 +15,7 @@ class AwsLambdaModule(val crossScalaVersion: String)
     with TpolecatModule {
   def artifactName = T { "mill-aws-lambda" }
 
-  def publishVersion = "0.1.0"
+  def publishVersion = "0.1.1"
 
   def pomSettings = PomSettings(
     description = "Mill plugin to deploy code to AWS Lambda",
@@ -30,11 +30,14 @@ class AwsLambdaModule(val crossScalaVersion: String)
 
   lazy val millVersion = millVersionFor(crossScalaVersion)
 
-  def compileIvyDeps = Agg(
-    ivy"com.lihaoyi::mill-scalalib:$millVersion",
+  def ivyDeps = Agg(
     ivy"software.amazon.awssdk:iam:$AwsVersion",
     ivy"software.amazon.awssdk:lambda:$AwsVersion",
     ivy"software.amazon.awssdk:s3:$AwsVersion"
+  )
+
+  def compileIvyDeps = Agg(
+    ivy"com.lihaoyi::mill-scalalib:$millVersion"
   )
 
 }
