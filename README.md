@@ -12,12 +12,12 @@
 Import the module in `build.sc` using mill's `$ivy` import syntax, and extend `AwsLambdaModel` in your build definition:
 
 ```scala
-import $ivy.`io.github.bbstilson::mill-aws-lambda:0.1.1`
+import $ivy.`io.github.bbstilson::mill-aws-lambda:0.1.2-SNAPSHOT`
 
 import io.github.bbstilson.AwsLambdaModule
 
 object project extends AwsLambdaModule {
-  def scalaVersion = "2.13.2"
+  def scalaVersion = "2.13.4"
 
   def s3Bucket = "bucket"
   def s3KeyPrefix = "prefix"
@@ -45,10 +45,8 @@ mill project.deployLambda
 
 It has been tested with:
 
-* 2.13.2
-* 2.13.1
-* 2.12.11
-* 2.12.10
+* 2.13.4
+* 2.12.13
 
 ## License
 
