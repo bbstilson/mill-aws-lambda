@@ -32,6 +32,10 @@ Then, to package and deploy your project to an existing AWS Lambda.
 mill project.deployLambda
 ```
 
+## Example Project
+
+Check out the project in the [`examples`](./examples) directory for a complete example.
+
 ## Configuration
 
 | Setting  | Description |

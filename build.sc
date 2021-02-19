@@ -15,7 +15,7 @@ class AwsLambdaModule(val crossScalaVersion: String)
     with TpolecatModule {
   def artifactName = T { "mill-aws-lambda" }
 
-  def publishVersion = "0.1.2-SNAPSHOT"
+  def publishVersion = "0.1.2"
 
   def pomSettings = PomSettings(
     description = "Mill plugin to deploy code to AWS Lambda",
