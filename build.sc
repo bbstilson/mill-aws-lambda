@@ -44,9 +44,8 @@ class AwsLambdaModule(val crossScalaVersion: String)
   )
 }
 
-def millVersionFor(scalaVersion: String): String = {
+def millVersionFor(scalaVersion: String): String =
   if (scalaVersion.startsWith("2.13")) "0.9.5" else "0.6.3"
-}
 
 object Dependencies {
 

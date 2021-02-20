@@ -68,29 +68,17 @@ trait AwsLambdaModule extends ScalaModule {
   }
 }
 
-object AwsLambdaModule {
-  private[bbstilson] val DEFAULT_MEMORY = 128
+private[bbstilson] object AwsLambdaModule {
+  private val DEFAULT_MEMORY = 128
 
-  private[bbstilson] val logger = new mill.util.PrintLogger(
-    true,
-    false,
-    ammonite.util.Colors.Default,
-    System.out,
-    System.err,
-    System.err,
-    System.in,
-    debugEnabled = false,
-    context = "AwsLambdaModule - "
-  )
-
-  private[bbstilson] def lambdaExists(name: LambdaName)(implicit lambda: AWSLambda): Boolean =
+  private def lambdaExists(name: LambdaName)(implicit lambda: AWSLambda): Boolean =
     Try(lambda.getFunction(new GetFunctionRequest().withFunctionName(name.value))) match {
       case Success(_)                            => true
       case Failure(_: ResourceNotFoundException) => false
       case Failure(ex)                           => throw ex
     }
 
-  private[bbstilson] def uploadJar(
+  private def uploadJar(
     bucket: LambdaBucket,
     prefix: LambdaPrefix,
     jarPath: File
@@ -106,22 +94,21 @@ object AwsLambdaModule {
     val jarSizeInBytes = jarPath.length()
     var totalTransferred = 0L
 
-    val p = mill.util.PrefixLogger(logger, "AwsLambdaModule - ", "Upload progress: ")
     request.setGeneralProgressListener(new ProgressListener() {
       override def progressChanged(event: ProgressEvent): Unit = {
         totalTransferred += event.getBytesTransferred()
-        val perc = String.format("%.2f", (totalTransferred.toDouble / jarSizeInBytes) * 100)
-        p.ticker(s"$perc%")
+        val perc = "%.2f".format((totalTransferred.toDouble / jarSizeInBytes) * 100)
+        Logger.prefix.ticker(s"$perc%")
       }
     })
 
     tm.upload(request).waitForCompletion()
   }
 
-  private[bbstilson] def createLambda(config: LambdaConfig)(implicit
+  private def createLambda(config: LambdaConfig)(implicit
     lambda: AWSLambda
   ): Unit = {
-    logger.info("Creating lambda.")
+    Logger.logger.info("Creating lambda.")
     lambda.createFunction({
       val role = config.roleArn.value.getOrElse {
         throw new IllegalArgumentException(
@@ -140,26 +127,26 @@ object AwsLambdaModule {
             .withS3Key(config.prefix.value)
         )
     })
-    logger.info(s"Successfully created ${config.name.value}")
+    Logger.logger.info(s"Successfully created ${config.name.value}")
   }
 
-  private[bbstilson] def updateLambda(config: LambdaConfig)(implicit
+  private def updateLambda(config: LambdaConfig)(implicit
     lambda: AWSLambda
   ): Unit = {
-    logger.info("Updating lambda code.")
+    Logger.logger.info("Updating lambda code.")
     val updateCodeReq = mkUpdateCodeReq(config)
     val updateResult = lambda.updateFunctionCode(updateCodeReq)
     lambda.tagResource(mkTagReq(updateResult.getFunctionArn()))
-    logger.info(s"Succesfully update ${config.name.value}")
+    Logger.logger.info(s"Succesfully update ${config.name.value}")
   }
 
-  private[bbstilson] def mkUpdateCodeReq(config: LambdaConfig): UpdateFunctionCodeRequest =
+  private def mkUpdateCodeReq(config: LambdaConfig): UpdateFunctionCodeRequest =
     new UpdateFunctionCodeRequest()
       .withFunctionName(config.name.value)
       .withS3Bucket(config.bucket.value)
       .withS3Key(config.prefix.value)
 
-  private[bbstilson] def mkTagReq(arn: String): TagResourceRequest =
+  private def mkTagReq(arn: String): TagResourceRequest =
     new TagResourceRequest()
       .withResource(arn)
       .withTags(Map("deploy.timestamp" -> Instant.now().toString()).asJava)
