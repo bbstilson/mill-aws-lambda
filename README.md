@@ -21,8 +21,11 @@ object project extends AwsLambdaModule {
 
   def s3Bucket = "bucket"
   def s3KeyPrefix = "prefix"
-  def lambdaName = "your-lambda-name"
-  def lambdaHandler = "org.bbstilson.Handler::handle"
+  def lambdaName = "my-lambda-name"
+  def lambdaHandler = "org.company.Handler::handle"
+  // These two are only required if you want to create a lambda.
+  def lambdaMemory = Some(512)
+  def lambdaRoleArn = Some("arn:aws:iam::1234567890:role/service-role/lambda-role")
 }
 ```
 
@@ -44,6 +47,8 @@ Check out the project in the [`examples`](./examples) directory for a complete e
 | s3KeyPrefix | The prefix to the S3 key where the jar will be uploaded. |
 | lambdaName | The name to use for this AWS Lambda function. |
 | lambdaHandler | Class name and method to be executed. |
+| lambdaMemory | The amount of memory available to the function at runtime. Increasing the function's memory also increases its CPU allocation. The default value is 128 MB. The value can be any multiple of 1 MB. |
+| lambdaRoleArn | The Amazon Resource Name (ARN) of the function's execution role. |
 
 ## Scala Versions
 
