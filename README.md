@@ -12,7 +12,7 @@
 Import the module in `build.sc` using mill's `$ivy` import syntax, and extend `AwsLambdaModel` in your build definition:
 
 ```scala
-import $ivy.`io.github.bbstilson::mill-aws-lambda:0.1.2-SNAPSHOT`
+import $ivy.`io.github.bbstilson::mill-aws-lambda:0.2.0`
 
 import io.github.bbstilson.AwsLambdaModule
 
