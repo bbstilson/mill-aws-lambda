@@ -5,7 +5,7 @@
 [![Latest Version](https://img.shields.io/maven-central/v/io.github.bbstilson/mill-aws-lambda_2.13.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.bbstilson%22%20AND%20a%3A%22mill-aws-lambda_2.13%22)
 
 
-[Mill](http://www.lihaoyi.com/mill/) plugin to deploy code to AWS Lambda. This was inspired by the sbt plugin [`sbt-aws-lambda`](https://github.com/saksdirect/sbt-aws-lambda).
+[Mill](http://www.lihaoyi.com/mill/) plugin to deploy code to AWS Lambda.
 
 ## Usage
 
@@ -35,10 +35,6 @@ Then, to deploy:
 mill project.deployLambda
 ```
 
-## Example Project
-
-Check out the project in the [`examples`](./examples) directory for a complete example.
-
 ## Configuration
 
 | Setting  | Description |
@@ -56,6 +52,10 @@ It has been tested with:
 
 * 2.13.4
 * 2.12.13
+
+## Example Project
+
+Check out the project in the [`examples`](./examples) directory for a complete example.
 
 ## License
 
