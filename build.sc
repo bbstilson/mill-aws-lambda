@@ -3,6 +3,7 @@ import $ivy.`io.github.davidgregory084::mill-tpolecat:0.2.0`
 import mill._
 import mill.scalalib._
 import mill.scalalib.publish._
+import mill.scalalib.scalafmt._
 import io.github.davidgregory084.TpolecatModule
 
 import Dependencies._
@@ -14,7 +15,8 @@ object aws_lambda extends Cross[AwsLambdaModule](crossScalaVersions: _*)
 class AwsLambdaModule(val crossScalaVersion: String)
     extends CrossScalaModule
     with PublishModule
-    with TpolecatModule {
+    with TpolecatModule
+    with ScalafmtModule {
 
   def artifactName = T { "mill-aws-lambda" }
 
