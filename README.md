@@ -29,7 +29,7 @@ object project extends AwsLambdaModule {
 }
 ```
 
-Then, to package and deploy your project to an existing AWS Lambda.
+Then, to deploy:
 
 ```bash
 mill project.deployLambda
