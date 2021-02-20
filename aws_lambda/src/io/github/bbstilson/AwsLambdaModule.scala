@@ -48,6 +48,7 @@ trait AwsLambdaModule extends ScalaModule {
     require(lambdaMemory.isEmpty || lambdaMemory.get >= DEFAULT_MEMORY)
 
     implicit val lambda: AWSLambda = AWSLambdaClientBuilder.defaultClient()
+
     val config = LambdaConfig(
       LambdaBucket(s3Bucket),
       LambdaPrefix(s3KeyPrefix),
@@ -60,16 +61,10 @@ trait AwsLambdaModule extends ScalaModule {
     // Upload jar.
     uploadJar(config.bucket, config.prefix, assembly().path.toIO)
 
-    val attempt =
-      if (lambdaExists(config.name))
-        updateLambda(config)
-      else
-        createLambda(config)
-
-    attempt match {
-      case Failure(ex) => throw ex
-      case Success(_)  =>
-    }
+    if (lambdaExists(config.name))
+      updateLambda(config)
+    else
+      createLambda(config)
   }
 }
 
@@ -125,7 +120,7 @@ object AwsLambdaModule {
 
   private[bbstilson] def createLambda(config: LambdaConfig)(implicit
     lambda: AWSLambda
-  ): Try[Unit] = Try {
+  ): Unit = {
     logger.info("Creating lambda.")
     lambda.createFunction({
       val role = config.roleArn.value.getOrElse {
@@ -150,7 +145,7 @@ object AwsLambdaModule {
 
   private[bbstilson] def updateLambda(config: LambdaConfig)(implicit
     lambda: AWSLambda
-  ): Try[Unit] = Try {
+  ): Unit = {
     logger.info("Updating lambda code.")
     val updateCodeReq = mkUpdateCodeReq(config)
     val updateResult = lambda.updateFunctionCode(updateCodeReq)
@@ -168,9 +163,4 @@ object AwsLambdaModule {
     new TagResourceRequest()
       .withResource(arn)
       .withTags(Map("deploy.timestamp" -> Instant.now().toString()).asJava)
-
-  def formatException(t: Throwable): String = {
-    val msg = Option(t.getLocalizedMessage).getOrElse(t.toString)
-    s"$msg\n${t.getStackTrace.mkString("", "\n", "\n")}"
-  }
 }
