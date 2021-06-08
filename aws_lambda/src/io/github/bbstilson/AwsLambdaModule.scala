@@ -44,7 +44,7 @@ trait AwsLambdaModule extends ScalaModule {
   // The Amazon Resource Name (ARN) of the function's execution role.
   def lambdaRoleArn: Option[String] = None
 
-  def deployLambda = T.command {
+  def deployLambda() = T.command {
     require(lambdaMemory.isEmpty || lambdaMemory.get >= DEFAULT_MEMORY)
 
     implicit val lambda: AWSLambda = AWSLambdaClientBuilder.defaultClient()

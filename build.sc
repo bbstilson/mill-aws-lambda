@@ -8,7 +8,7 @@ import io.github.davidgregory084.TpolecatModule
 
 import Dependencies._
 
-lazy val crossScalaVersions = Seq("2.13.4", "2.12.13")
+lazy val crossScalaVersions = Seq("2.13.6", "2.12.13")
 
 object aws_lambda extends Cross[AwsLambdaModule](crossScalaVersions: _*)
 
@@ -20,7 +20,7 @@ class AwsLambdaModule(val crossScalaVersion: String)
 
   def artifactName = T { "mill-aws-lambda" }
 
-  def publishVersion = "0.2.0"
+  def publishVersion = "0.2.1"
 
   def pomSettings = PomSettings(
     description = "Mill plugin to deploy code to AWS Lambda",
@@ -45,7 +45,7 @@ class AwsLambdaModule(val crossScalaVersion: String)
 }
 
 def millVersionFor(scalaVersion: String): String =
-  if (scalaVersion.startsWith("2.13")) "0.9.5" else "0.6.3"
+  if (scalaVersion.startsWith("2.12")) "0.6.3" else "0.9.8"
 
 object Dependencies {
 
