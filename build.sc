@@ -20,7 +20,7 @@ class AwsLambdaModule(val crossScalaVersion: String)
 
   def artifactName = T { "mill-aws-lambda" }
 
-  def publishVersion = "0.2.1"
+  def publishVersion = "0.2.2"
 
   def pomSettings = PomSettings(
     description = "Mill plugin to deploy code to AWS Lambda",
@@ -50,7 +50,7 @@ def millVersionFor(scalaVersion: String): String =
 object Dependencies {
 
   object Versions {
-    val aws = "1.11.958"
+    val aws = "1.12.12"
   }
 
   object Libraries {
