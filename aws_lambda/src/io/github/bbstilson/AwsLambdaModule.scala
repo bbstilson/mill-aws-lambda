@@ -69,7 +69,7 @@ trait AwsLambdaModule extends ScalaModule {
 }
 
 private[bbstilson] object AwsLambdaModule {
-  private val DEFAULT_MEMORY = 128
+  private val DEFAULT_MEMORY = 512
 
   private def lambdaExists(name: LambdaName)(implicit lambda: AWSLambda): Boolean =
     Try(lambda.getFunction(new GetFunctionRequest().withFunctionName(name.value))) match {
@@ -119,7 +119,7 @@ private[bbstilson] object AwsLambdaModule {
         .withFunctionName(config.name.value)
         .withHandler(config.handler.value)
         .withMemorySize(config.memory.value)
-        .withRuntime(LambdaRuntime.Java8)
+        .withRuntime(LambdaRuntime.Java11)
         .withRole(role)
         .withCode(
           new FunctionCode()
